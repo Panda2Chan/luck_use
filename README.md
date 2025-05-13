@@ -1,54 +1,127 @@
-# React + TypeScript + Vite
+# LuckUse - A React Hooks Library
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+欢迎使用我的 React Hook 库！这个库提供了一系列实用的自定义 React Hook，旨在帮助您更高效地开发 React 应用程序。
 
-Currently, two official plugins are available:
+## 特性
+- **功能丰富**：包含多种常用的自定义 Hook，可满足不同场景的开发需求。
+- **类型安全**：使用 TypeScript 编写，提供完善的类型定义，确保代码的健壮性。
+- **易于集成**：可以轻松集成到现有的 React 项目中。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 安装
+您可以使用 npm 或 pnpm 来安装这个库：
 
-## Expanding the ESLint configuration
+## Hooks 列表
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### useAsyncQueue
+执行一系列异步任务，支持暂停、重置和并发控制。
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+#### 参数
+- `tasks`: 异步任务数组
+- `concurrency`: 并发任务数量，默认为 1
+
+#### 使用示例
+```tsx:/Users/chenxuanhong/code/luck_use_lib/src/hooks/useAsyncQueue.tsx
+import useAsyncQueue from './useAsyncQueue';
+
+const asyncTask1 = async () => {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  return 'Task 1 completed';
+};
+
+const asyncTask2 = async () => {
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  return 'Task 2 completed';
+};
+
+const tasks = [asyncTask1, asyncTask2];
+
+const App = () => {
+  const { run, reset, pause, status, results } = useAsyncQueue(tasks);
+
+  return (
+    <div>
+      <button onClick={run}>运行</button>
+      <button onClick={reset}>重置</button>
+      <button onClick={pause}>暂停</button>
+      <p>状态: {status}</p>
+      <p>结果: {JSON.stringify(results)}</p>
+    </div>
+  );
+};
+
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### useCurrency
+用于格式化货币数值。
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+#### 参数
+- `initialValue`: 初始数值
+- `config`: 配置对象，包含 `locale`（地区，默认为 'zh-CN'）、`currency`（货币类型，默认为 'CNY'）、`minimumFractionDigits`（最小小数位数，默认为 2）和 `maximumFractionDigits`（最大小数位数，默认为 2）。
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+#### 使用示例
+```tsx:/Users/chenxuanhong/code/luck_use_lib/src/hooks/useCurrency.tsx
+import useCurrency from './useCurrency';
+
+const App = () => {
+  const { value, formattedValue, setValue } = useCurrency(100);
+
+  return (
+    <div>
+      <p>原始值: {value}</p>
+      <p>格式化后的值: {formattedValue}</p>
+      <button onClick={() => setValue(value + 10)}>增加 10</button>
+    </div>
+  );
+};
+
+```
+
+### useIdle
+用于检测用户在页面上多久没有操作。
+
+#### 参数
+- `timeout`: 超时时间，单位为毫秒，默认为 300000 毫秒（即 5 分钟）
+- `continueListeningAfterTimeout`: 超时候是否继续监听，默认为 false
+
+#### 使用示例
+```tsx:/Users/chenxuanhong/code/luck_use_lib/src/hooks/useIdle.tsx
+import useIdle from './useIdle';
+
+const App = () => {
+  const { idleTime, isTimedOut, resetIdleTimer } = useIdle(300000, false);
+
+  return (
+    <div>
+      <p>空闲时间: {idleTime} 毫秒</p>
+      <p>是否超时: {isTimedOut ? '是' : '否'}</p>
+      <button onClick={resetIdleTimer}>重置计时器</button>
+    </div>
+  );
+};
+
+```
+
+### useLocalStorage
+用于操作浏览器的本地存储。
+
+#### 参数
+- `key`: 存储的键名
+- `initialValue`: 初始值
+
+#### 使用示例
+```tsx:/Users/chenxuanhong/code/luck_use_lib/src/hooks/useLocalStorage.tsx
+import useLocalStorage from './useLocalStorage';
+
+const App = () => {
+  const { storedValue, setValue, clearStorage } = useLocalStorage('myKey', '初始值');
+
+  return (
+    <div>
+      <p>存储的值: {storedValue}</p>
+      <button onClick={() => setValue('新值')}>设置新值</button>
+      <button onClick={clearStorage}>清空存储</button>
+    </div>
+  );
+};
+
 ```
