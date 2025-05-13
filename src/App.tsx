@@ -1,16 +1,18 @@
 import React from 'react';
 import UseCurrencyDemo  from './demo/useCurrency.demo'; 
 import UseLocalStorageDemo from './demo/useLocalStorage.demo';
-import UseIdle from './demo/useIdle.demo';
-import UseAsyncQueue from './demo/useAsyncQueue.demo';
+import UseIdleDemo from './demo/useIdle.demo';
+import UseAsyncQueueDemo from './demo/useAsyncQueue.demo';
+import useNetworkDemo from './demo/useNetwork.demo';
 
 
 const App: React.FC = () => {
   const compArr = [
     UseCurrencyDemo,
     UseLocalStorageDemo,
-    UseIdle,
-    UseAsyncQueue,
+    UseIdleDemo,
+    UseAsyncQueueDemo,
+    useNetworkDemo,
   ];
   return (
     <ul style={{display:'flex',flexDirection:'column',gap:'20px'}}>
